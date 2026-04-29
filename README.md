@@ -11,9 +11,9 @@
 </p>
 
 <p align="center">
+  <a href="#-visual-gallery">Visual Gallery</a> ·
   <a href="#-installation">Installation</a> ·
   <a href="#-run-the-demo">Run Demo</a> ·
-  <a href="#-visual-gallery">Visual Gallery</a> ·
   <a href="#-gui-guide">GUI Guide</a> ·
   <a href="#-project-map">Project Map</a>
 </p>
@@ -32,127 +32,6 @@
 
 > Built for quick dataset labeling, robotics affordance experiments, and visual sanity-checking of point-cloud interaction regions.
 
-## 🚀 Installation
-
-> New to Python? Follow the **Conda path** below. It keeps this project isolated from your other Python projects.
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Sihang-Geng/Point-Cloud-Affordance-Annotator.git
-cd Point-Cloud-Affordance-Annotator
-```
-
-### 2. Create a clean environment
-
-| Option | Best for | Commands |
-| --- | --- | --- |
-| 🟢 Conda, recommended | Beginners / Windows users | See block below |
-| 🔵 venv | Lightweight Python users | See block below |
-
-#### 🟢 Conda environment
-
-```bash
-conda create -n pc-affordance python=3.9 -y
-conda activate pc-affordance
-```
-
-#### 🔵 Python venv environment
-
-```bash
-python -m venv .venv
-
-# Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-
-# macOS / Linux
-source .venv/bin/activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-If the download is slow in your region, try a mirror:
-
-```bash
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-```
-
-### 4. Check the installation
-
-```bash
-python -c "import open3d, numpy, scipy, matplotlib, plyfile; print('Environment ready!')"
-```
-
-If you see `Environment ready!`, you are good to go.
-
-<table>
-  <tr>
-    <td><b>Small tip</b></td>
-    <td>If Open3D opens a blank window or fails to display, update your graphics driver and make sure you are running on a desktop environment, not a headless terminal.</td>
-  </tr>
-</table>
-
-## ⚡ Run the Demo
-
-The fastest test is already configured in `test.py`:
-
-```python
-TEST_POINT_CLOUD_FILE = r"data\point_clouds\object_95.ply"
-OUTPUT_DIR = "outputs"
-```
-
-Run:
-
-```bash
-python test.py
-```
-
-Then follow this tiny loop:
-
-| Step | What to do | What happens |
-| --- | --- | --- |
-| 1 | `Shift + left click` several points | seed points are selected |
-| 2 | Press `Q` | the seeds are saved to `outputs/` |
-| 3 | Click `执行扩散计算` | affordance heatmap appears |
-| 4 | Tune `k`, `alpha`, or colormap | quickly compare diffusion behavior |
-| 5 | Click `保存扩散结果` | save the colored `.ply` |
-
-### Use your own point cloud
-
-1. Put your `.ply` file here:
-
-```text
-data/point_clouds/
-```
-
-2. Edit the top of `test.py`:
-
-```python
-TEST_POINT_CLOUD_FILE = r"data\point_clouds\your_file.ply"
-OUTPUT_DIR = "outputs"
-```
-
-3. Run:
-
-```bash
-python test.py
-```
-
-No command-line path arguments are required. Edit the small config block, then run the script.
-
-### Quick troubleshooting
-
-| Symptom | Try this |
-| --- | --- |
-| `ModuleNotFoundError` | Run `pip install -r requirements.txt` inside the active environment |
-| Open3D window does not appear | Use a local desktop session and update graphics drivers |
-| PowerShell refuses activation | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, then activate again |
-| Point cloud is empty | Check that your PLY has `x`, `y`, `z` vertex fields |
-
 ## 🖼 Visual Gallery
 
 ### Local Interaction Region
@@ -166,6 +45,70 @@ No command-line path arguments are required. Edit the small config block, then r
 | 🎯 Sparse seeds | 🌈 Diffused heatmap |
 | --- | --- |
 | <img src="examples/readme/annotation-ring-region.jpg" alt="Sparse annotation for ring region" width="360"> | <img src="examples/readme/diffusion-ring-region.jpg" alt="Diffused affordance result for ring region" width="360"> |
+
+## 🚀 Installation
+
+### 1. Clone
+
+```bash
+git clone https://github.com/Sihang-Geng/Point-Cloud-Affordance-Annotator.git
+cd Point-Cloud-Affordance-Annotator
+```
+
+### 2. Create the conda environment
+
+```bash
+conda create -n pc-affordance python=3.9 -y
+conda activate pc-affordance
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Optional mirror:
+
+```bash
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+
+## ⚡ Run the Demo
+
+Run the prepared sample:
+
+```bash
+python test.py
+```
+
+Then:
+
+| Step | What to do | What happens |
+| --- | --- | --- |
+| 1 | `Shift + left click` points | choose sparse seeds |
+| 2 | Press `Q` | return to the GUI |
+| 3 | Click `执行扩散计算` | see the heatmap |
+| 4 | Click `保存扩散结果` | write results to `outputs/` |
+
+Use your own `.ply`:
+
+```text
+data/point_clouds/
+```
+
+Edit the top of `test.py`:
+
+```python
+TEST_POINT_CLOUD_FILE = r"data\point_clouds\your_file.ply"
+OUTPUT_DIR = "outputs"
+```
+
+Run again:
+
+```bash
+python test.py
+```
 
 ## 🧭 GUI Guide
 
