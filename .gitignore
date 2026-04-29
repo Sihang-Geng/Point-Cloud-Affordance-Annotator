@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# Runtime annotation outputs. Keep the folder, ignore generated files.
+outputs/*
+!outputs/.gitkeep
