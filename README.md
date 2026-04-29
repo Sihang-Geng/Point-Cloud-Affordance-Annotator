@@ -86,9 +86,9 @@ Run the prepared sample:
 python test.py
 ```
 
-<p align="center">
-  🎯 Pick → ✅ Q → 🌈 Diffuse → 💾 Save
-</p>
+| 🎯 Pick seeds | ✅ Press `Q` | 🌈 Diffuse | 💾 Save |
+| --- | --- | --- | --- |
+| choose sparse points | return to GUI | generate heatmap | write results |
 
 Then:
 
