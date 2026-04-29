@@ -20,15 +20,15 @@
 
 ---
 
-## ✨ What It Does
+## ✨ Capabilities
 
-| Need | What this tool gives you |
+| Capability | Result |
 | --- | --- |
-| Sparse 3D annotation | Select only a few seed points in an Open3D window |
-| Dense affordance labels | Diffuse seed points to every point in the cloud |
-| Fast visual feedback | Re-run diffusion after changing `k`, `alpha`, or colormap |
-| Clean files | Inputs stay in `data/point_clouds/`, outputs go to `outputs/` |
-| Easy reading | Core logic split into small Python modules |
+| 🎯 Sparse clicks | Select only a few seed points |
+| 🌈 Dense heatmap | Diffuse scores to every point |
+| ⚡ Fast feedback | Re-run with different `k`, `alpha`, or colormap |
+| 🧰 Clean workflow | Inputs in `data/point_clouds/`, outputs in `outputs/` |
+| 🧩 Easy reading | Core logic split into small modules |
 
 > Built for quick dataset labeling, robotics affordance experiments, and visual sanity-checking of point-cloud interaction regions.
 
@@ -36,11 +36,15 @@
 
 ### Local Interaction Region
 
+Few clicks on a local region become a smooth affordance field.
+
 | 🎯 Sparse seeds | 🌈 Diffused heatmap |
 | --- | --- |
 | <img src="examples/readme/annotation-local-region.jpg" alt="Sparse annotation for local interaction region" width="360"> | <img src="examples/readme/diffusion-local-region.jpg" alt="Diffused affordance result for local interaction region" width="360"> |
 
 ### Ring / Handle Region
+
+Sparse seeds on the handle-like region expand into a clear interaction heatmap.
 
 | 🎯 Sparse seeds | 🌈 Diffused heatmap |
 | --- | --- |
@@ -82,6 +86,10 @@ Run the prepared sample:
 python test.py
 ```
 
+<p align="center">
+  🎯 Pick → ✅ Q → 🌈 Diffuse → 💾 Save
+</p>
+
 Then:
 
 | Step | What to do | What happens |
@@ -116,15 +124,15 @@ python test.py
   <img src="examples/readme/gui.jpg" alt="Point Cloud Affordance Annotator GUI" width="540">
 </p>
 
-| Button / control | Meaning |
+| Control | Purpose |
 | --- | --- |
-| `加载并标注下一个点云` | Load a point cloud and open the picking window |
-| `重新标注当前点云` | Re-pick seed points for the current cloud |
-| `k近邻数` | Control the local graph neighborhood |
-| `衰减系数` | Control diffusion strength |
-| `色彩映射` | Switch visual colormap |
-| `执行扩散计算` | Generate the affordance heatmap |
-| `保存扩散结果` | Save the colored `.ply` result |
+| 📂 `加载并标注下一个点云` | Load a point cloud and open the picking window |
+| 🔁 `重新标注当前点云` | Re-pick seed points for the current cloud |
+| 🔎 `k近邻数` | Control the local graph neighborhood |
+| 🌊 `衰减系数` | Control diffusion strength |
+| 🎨 `色彩映射` | Switch visual colormap |
+| 🌈 `执行扩散计算` | Generate the affordance heatmap |
+| 💾 `保存扩散结果` | Save the colored `.ply` result |
 
 Open3D picking:
 
@@ -137,6 +145,10 @@ Open3D picking:
 ## 📦 Outputs
 
 Generated files are written to `outputs/` by default.
+
+```text
+Pick seeds → Press Q → Run diffusion → Save result
+```
 
 | File | Description |
 | --- | --- |
