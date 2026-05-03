@@ -16,9 +16,9 @@ from .visualization import visualize_affordance
 class AnnotationApp:
     def __init__(self, root, directory, start_folder_number=0, point_cloud_files=None, output_directory=None):
         self.root = root
-        self.root.title("Point Cloud Affordance Annotator")
-        self.root.geometry("760x640")
-        self.root.minsize(720, 600)
+        self.root.title("✨ 3D Affordance Studio (智能点云标注与扩散)")
+        self.root.geometry("1400x1100")
+        self.root.minsize(1200, 950)
 
         # File management
         self.base_directory = directory
@@ -76,124 +76,161 @@ class AnnotationApp:
         """Creates and arranges all the GUI widgets."""
         self._configure_style()
 
-        main_frame = ttk.Frame(self.root, padding="24", style="App.TFrame")
+        main_frame = ttk.Frame(self.root, padding="45", style="App.TFrame")
         main_frame.pack(fill=tk.BOTH, expand=True)
 
         header_frame = ttk.Frame(main_frame, style="App.TFrame")
-        header_frame.pack(fill=tk.X, pady=(0, 18))
+        header_frame.pack(fill=tk.X, pady=(0, 40))
 
         title_label = ttk.Label(
             header_frame,
-            text="Point Cloud Affordance Annotator",
+            text="3D Point Cloud Affordance Studio",
             style="Title.TLabel",
         )
         title_label.pack(anchor=tk.W)
 
         subtitle_label = ttk.Label(
             header_frame,
-            text="少量关键点标注，快速扩散生成点云 affordance 热力标签",
+            text="快速、直观的点云关键点标注与 Affordance 热力扩散生成系统",
             style="Subtitle.TLabel",
         )
-        subtitle_label.pack(anchor=tk.W, pady=(6, 0))
+        subtitle_label.pack(anchor=tk.W, pady=(10, 0))
 
-        file_frame = ttk.Frame(main_frame)
-        file_frame.pack(fill=tk.X, pady=(0, 14))
+        # ---- TOP BAND: Two Columns ----
+        top_band = ttk.Frame(main_frame, style="App.TFrame")
+        top_band.pack(fill=tk.X, pady=(0, 25))
         
-        self.next_button = ttk.Button(file_frame, text="加载并标注下一个点云", style="Primary.TButton", command=self.load_next_file)
-        self.reannotate_button = ttk.Button(file_frame, text="重新标注当前点云", command=self.reannotate)
-        self.next_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 8))
-        self.reannotate_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(8, 0))
-
-        params_frame = ttk.LabelFrame(main_frame, text="Diffusion Settings / 扩散参数", padding="16", style="Card.TLabelframe")
-        params_frame.pack(pady=(0, 14), fill=tk.X)
+        # LEFT COLUMN: Parameters
+        params_frame = ttk.LabelFrame(top_band, text=" ⚙️ 扩散参数 ", padding="25", style="Card.TLabelframe")
+        params_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 20))
         params_frame.columnconfigure(1, weight=1)
-        params_frame.columnconfigure(2, minsize=70)
 
         self.k_slider = self._create_slider(params_frame, "k近邻数:", 0, 1, 50, 10)
-        self.alpha_slider = self._create_slider(params_frame, "衰减系数:", 0, 0.9, 0.999, 0.998, is_float=True)
+        self.alpha_slider = self._create_slider(params_frame, "衰减系数:", 1, 0.9, 0.999, 0.998, is_float=True)
         
-        colormap_label = ttk.Label(params_frame, text="色彩映射:")
-        colormap_label.grid(row=2, column=0, padx=(0, 10), pady=(12, 0), sticky=tk.W)
+        colormap_label = ttk.Label(params_frame, text="色彩映射:", style="CardText.TLabel")
+        colormap_label.grid(row=2, column=0, padx=(0, 25), pady=(25, 0), sticky=tk.W)
         self.colormap_combo = ttk.Combobox(
             params_frame,
-            values=['jet', 'viridis', 'plasma', 'inferno', 'magma', 'cividis'],
-            width=18,
+            values=['jet', 'viridis', 'plasma', 'inferno', 'magma', 'cividis', 'coolwarm'],
+            width=30,
             state="readonly",
+            font=("微软雅黑", 18)
         )
         self.colormap_combo.set('jet')
-        self.colormap_combo.grid(row=2, column=1, padx=0, pady=(12, 0), sticky=tk.W)
+        self.colormap_combo.grid(row=2, column=1, padx=0, pady=(25, 0), sticky=tk.W)
 
-        action_frame = ttk.Frame(main_frame)
-        action_frame.pack(fill=tk.X, pady=(0, 14))
-        self.calculate_button = ttk.Button(action_frame, text="执行扩散计算", style="Primary.TButton", command=self.calculate_diffusion)
-        self.save_button = ttk.Button(action_frame, text="保存扩散结果", command=self.save_results)
-        self.calculate_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 8))
-        self.save_button.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(8, 0))
+        # RIGHT COLUMN: Actions Grid (2x2)
+        actions_frame = ttk.LabelFrame(top_band, text=" 🚀 操作面板 ", padding="25", style="Card.TLabelframe")
+        actions_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(20, 0))
 
-        log_frame = ttk.LabelFrame(main_frame, text="Run Log / 运行日志", padding="10", style="Card.TLabelframe")
-        log_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 14))
+        actions_frame.columnconfigure(0, weight=1)
+        actions_frame.columnconfigure(1, weight=1)
+        actions_frame.rowconfigure(0, weight=1)
+        actions_frame.rowconfigure(1, weight=1)
+
+        self.next_button = ttk.Button(actions_frame, text=" 📁 加载下一个点云 ", style="Secondary.TButton", command=self.load_next_file)
+        self.next_button.grid(row=0, column=0, padx=15, pady=15, sticky=tk.NSEW)
+
+        self.reannotate_button = ttk.Button(actions_frame, text=" 🔄 重新标注 ", style="Secondary.TButton", command=self.reannotate)
+        self.reannotate_button.grid(row=0, column=1, padx=15, pady=15, sticky=tk.NSEW)
+
+        self.calculate_button = ttk.Button(actions_frame, text=" ▶️ 执行扩散计算 ", style="Primary.TButton", command=self.calculate_diffusion)
+        self.calculate_button.grid(row=1, column=0, padx=15, pady=15, sticky=tk.NSEW)
+
+        self.save_button = ttk.Button(actions_frame, text=" 💾 保存扩散结果 ", style="Action.TButton", command=self.save_results)
+        self.save_button.grid(row=1, column=1, padx=15, pady=15, sticky=tk.NSEW)
+
+        # ---- BOTTOM BAND: Log ----
+        log_frame = ttk.LabelFrame(main_frame, text=" 📝 运行日志 ", padding="20", style="Card.TLabelframe")
+        log_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 25))
 
         output_log = tk.Text(
             log_frame,
-            height=12,
-            background='#fbfbf8',
-            foreground='#1f2a2e',
-            insertbackground='#1f2a2e',
+            height=16,
+            background='#181A1B',
+            foreground='#E0E2E4',
+            insertbackground='#FFFFFF',
+            selectbackground='#264F78',
             relief=tk.FLAT,
             borderwidth=0,
-            font=("Consolas", 10),
+            font=("Consolas", 15),
             wrap=tk.WORD,
         )
         output_log.pack(fill=tk.BOTH, expand=True)
         self.output_log = output_log
 
+        # ---- FOOTER ----
         footer_frame = ttk.Frame(main_frame, style="App.TFrame")
         footer_frame.pack(fill=tk.X)
 
         hint_label = ttk.Label(
             footer_frame,
-            text="Open3D 选点：Shift + 左键选择，Shift + 右键取消，Q 保存退出",
+            text="💡 提示: Open3D 选点时，Shift + 左键选择，Shift + 右键取消，Q 键保存退出",
             style="Hint.TLabel",
         )
-        hint_label.pack(side=tk.LEFT)
+        hint_label.pack(side=tk.LEFT, pady=12)
 
-        exit_button = ttk.Button(footer_frame, text="退出", command=self.root.destroy, width=12)
+        exit_button = ttk.Button(footer_frame, text="🚪 退出程序", style="Danger.TButton", command=self.root.destroy, width=18)
         exit_button.pack(side=tk.RIGHT)
 
     def _configure_style(self):
-        self.root.configure(bg="#f3f0e8")
+        bg_color = "#F0F2F5"
+        card_bg = "#FFFFFF"
+        text_color = "#111827"
+        
+        self.root.configure(bg=bg_color)
         style = ttk.Style(self.root)
         try:
             style.theme_use("clam")
         except tk.TclError:
             pass
 
-        style.configure("App.TFrame", background="#f3f0e8")
-        style.configure("TFrame", background="#f3f0e8")
-        style.configure("Title.TLabel", background="#f3f0e8", foreground="#182226", font=("微软雅黑", 22, "bold"))
-        style.configure("Subtitle.TLabel", background="#f3f0e8", foreground="#61706f", font=("微软雅黑", 10))
-        style.configure("Hint.TLabel", background="#f3f0e8", foreground="#6f7775", font=("微软雅黑", 9))
-        style.configure("TLabel", background="#f3f0e8", foreground="#223034", font=("微软雅黑", 10))
-        style.configure("TButton", font=("微软雅黑", 10), padding=(14, 8))
-        style.configure("Primary.TButton", font=("微软雅黑", 10, "bold"), padding=(14, 8))
-        style.configure("Card.TLabelframe", background="#f3f0e8", bordercolor="#d8d2c6", relief=tk.SOLID)
-        style.configure("Card.TLabelframe.Label", background="#f3f0e8", foreground="#2a3437", font=("微软雅黑", 10, "bold"))
-        style.configure("Horizontal.TScale", background="#f3f0e8", troughcolor="#ded8cc")
-        style.configure("TCombobox", padding=4)
+        style.configure("App.TFrame", background=bg_color)
+        style.configure("Card.TLabelframe", background=card_bg, bordercolor="#D1D5DB", relief=tk.SOLID, borderwidth=1)
+        style.configure("Card.TLabelframe.Label", background=card_bg, foreground="#374151", font=("微软雅黑", 15, "bold"))
+        
+        style.configure("Title.TLabel", background=bg_color, foreground="#111827", font=("微软雅黑", 32, "bold"))
+        style.configure("Subtitle.TLabel", background=bg_color, foreground="#6B7280", font=("微软雅黑", 16))
+        style.configure("Hint.TLabel", background=bg_color, foreground="#6B7280", font=("微软雅黑", 14, "italic"))
+        style.configure("CardText.TLabel", background=card_bg, foreground=text_color, font=("微软雅黑", 16))
+        style.configure("TLabel", background=card_bg, foreground=text_color, font=("微软雅黑", 16))
+        
+        # Adjust button padding to avoid text cut-off while maintaining a nice click area
+        style.configure("TButton", font=("微软雅黑", 16, "bold"), padding=(10, 15), borderwidth=0, focuscolor="", relief=tk.FLAT)
+        
+        # Primary Action (Deep Blue)
+        style.configure("Primary.TButton", background="#2563EB", foreground="white")
+        style.map("Primary.TButton", background=[("active", "#1D4ED8"), ("disabled", "#9CA3AF")])
+        
+        # Success Action (Green)
+        style.configure("Action.TButton", background="#10B981", foreground="white")
+        style.map("Action.TButton", background=[("active", "#059669"), ("disabled", "#9CA3AF")])
+        
+        # Secondary Action (Light Gray)
+        style.configure("Secondary.TButton", background="#E5E7EB", foreground="#374151")
+        style.map("Secondary.TButton", background=[("active", "#D1D5DB"), ("disabled", "#F3F4F6")])
+        
+        # Danger Action (Red)
+        style.configure("Danger.TButton", background="#EF4444", foreground="white", padding=(0, 10))
+        style.map("Danger.TButton", background=[("active", "#DC2626")])
+
+        style.configure("Horizontal.TScale", background=card_bg, troughcolor="#E5E7EB", borderwidth=0)
+        style.configure("TCombobox", padding=8)
 
     def _create_slider(self, parent, text, row, from_, to, default, is_float=False):
         """Helper to create a label and a slider."""
-        label = ttk.Label(parent, text=text)
-        label.grid(row=row, column=0, padx=(0, 10), pady=8, sticky=tk.W)
+        label = ttk.Label(parent, text=text, style="CardText.TLabel")
+        label.grid(row=row, column=0, padx=(0, 25), pady=20, sticky=tk.W)
         
         slider_val = tk.DoubleVar() if is_float else tk.IntVar()
         slider_val.set(default)
         
-        slider = ttk.Scale(parent, from_=from_, to=to, orient=tk.HORIZONTAL, length=150, variable=slider_val)
-        slider.grid(row=row, column=1, padx=0, pady=8, sticky=tk.EW)
+        slider = ttk.Scale(parent, from_=from_, to=to, orient=tk.HORIZONTAL, length=350, variable=slider_val)
+        slider.grid(row=row, column=1, padx=0, pady=20, sticky=tk.EW)
         
-        val_label = ttk.Label(parent, textvariable=slider_val)
-        val_label.grid(row=row, column=2, padx=(14, 0), pady=8, sticky=tk.W)
+        val_label = ttk.Label(parent, textvariable=slider_val, style="CardText.TLabel")
+        val_label.grid(row=row, column=2, padx=(25, 0), pady=20, sticky=tk.W)
         
         return slider_val
 
