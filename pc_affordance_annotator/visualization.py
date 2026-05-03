@@ -11,15 +11,17 @@ def visualize_affordance(sampled_points, scores, colormap):
     cmap = plt.get_cmap(colormap)
     colors = cmap(norm(scores))[:, :3]
     pcd.colors = o3d.utility.Vector3dVector(colors)
-
+    
     vis = o3d.visualization.Visualizer()
-    vis.create_window(window_name="3D Affordance 扩散结果", width=1200, height=800)
+    vis.create_window(window_name="3D Affordance 扩散结果", width=1600, height=1000, left=50, top=50)
     vis.add_geometry(pcd)
-
-    render_option = vis.get_render_option()
-    render_option.background_color = np.asarray([0.035, 0.045, 0.055])
-    render_option.point_size = 4.0
-
+    
+    opt = vis.get_render_option()
+    if opt is not None:
+        opt.point_size = 5.0
+        opt.background_color = np.asarray([0.15, 0.15, 0.15]) # 深色背景更能凸显热力图
+        
     vis.run()
     vis.destroy_window()
+    
     return pcd
