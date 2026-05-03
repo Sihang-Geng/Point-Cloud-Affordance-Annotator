@@ -199,25 +199,6 @@ Batch mode keeps the original prototype rule:
 | Ordering | numeric parent folder |
 | Resume point | `BATCH_START_FOLDER` |
 
-## 🧠 How Diffusion Works
-
-The implementation keeps the original behavior:
-
-```text
-selected seed points -> kNN graph -> normalized graph -> linear solve -> [0, 1] score
-```
-
-The core equation is:
-
-```text
-(I - alpha * W_tilde) S = Y
-```
-
-Code location:
-
-```text
-pc_affordance_annotator/diffusion.py
-```
 
 ## 🗂 Project Map
 
