@@ -28,8 +28,13 @@ def visualize_and_select_points(pcd):
             pcd_for_picking.colors = o3d.utility.Vector3dVector(colors)
 
         vis = o3d.visualization.VisualizerWithEditing()
-        vis.create_window(window_name='点云选择 (Shift+左键选择, Q退出)', width=1200, height=800)
+        vis.create_window(window_name='点云选择 (Shift+左键选择, Q退出)', width=1600, height=1000, left=50, top=50)
         vis.add_geometry(pcd_for_picking)
+        
+        opt = vis.get_render_option()
+        if opt is not None:
+            opt.point_size = 5.0
+            opt.background_color = np.asarray([0.95, 0.95, 0.95])
         
         print("等待用户操作... (请在弹出窗口中进行选择)")
         vis.run()
