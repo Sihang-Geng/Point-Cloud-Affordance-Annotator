@@ -124,6 +124,16 @@ python test.py
   <img src="examples/readme/gui.jpg" alt="Point Cloud Affordance Annotator GUI" width="540">
 </p>
 
+### UI & UX Refresh
+
+| Area | Upgrade |
+| --- | --- |
+| 🖥 Main panel | Modern two-column layout with a larger 1400×1100 workspace |
+| 🎨 Visual style | Card-style controls, semantic buttons, and larger typography |
+| 📝 Logs | Terminal-like dark log panel for clearer progress feedback |
+| 🔍 Open3D picking | 1600×1000 window, larger points, and clearer shortcuts |
+| 🌈 Heatmap view | Dark rendering background for stronger affordance contrast |
+
 | Control | Purpose |
 | --- | --- |
 | 📂 `加载并标注下一个点云` | Load a point cloud and open the picking window |
@@ -189,7 +199,25 @@ Batch mode keeps the original prototype rule:
 | Ordering | numeric parent folder |
 | Resume point | `BATCH_START_FOLDER` |
 
+## 🧠 How Diffusion Works
 
+The implementation keeps the original behavior:
+
+```text
+selected seed points -> kNN graph -> normalized graph -> linear solve -> [0, 1] score
+```
+
+The core equation is:
+
+```text
+(I - alpha * W_tilde) S = Y
+```
+
+Code location:
+
+```text
+pc_affordance_annotator/diffusion.py
+```
 
 ## 🗂 Project Map
 
